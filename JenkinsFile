@@ -1,0 +1,97 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Stage 1: Use Maven to compile and package your code'
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Unit and Integration Tests') {
+            steps {
+                echo 'Stage 2: Use JUnit for unit tests and Postman for integration tests'
+                sh 'run_unit_tests.sh'
+                sh 'run_integration_tests.sh'
+            }
+            post {
+                failure {
+                    emailext subject: "Test Stage Failed: ${currentBuild.fullDisplayName}",
+                        body: "The Jenkins pipeline's test stage for your project has failed. Please check the logs for details.",
+                        to: 'srohith9114@gmail.com',
+                        attachLog: true
+                }
+                success {
+                    emailext subject: "Test Stage Succeeded: ${currentBuild.fullDisplayName}",
+                        body: "The Jenkins pipeline's test stage for your project has successfully completed.",
+                        to: 'srohith9114@gmail.com',
+                        attachLog: true
+                }
+            }
+        }
+
+        stage('Code Analysis') {
+            steps {
+                echo 'Stage 3: Use Jenkins Plugins to integrate code analysis tools like SonarQube'
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                echo 'Stage 4: Use Jenkins Plugins to integrate security scanning tools like OWASP ZAP'
+            }
+            post {
+                failure {
+                    emailext subject: "Security Scan Stage Failed: ${currentBuild.fullDisplayName}",
+                        body: "The Jenkins pipeline's security scan stage for your project has failed. Please check the logs for details.",
+                        to: 'srohith9114@gmail.com',
+                        attachLog: true
+                }
+                success {
+                    emailext subject: "Security Scan Stage Succeeded: ${currentBuild.fullDisplayName}",
+                        body: "The Jenkins pipeline's security scan stage for your project has successfully completed.",
+                        to: 'srohith9114@gmail.com',
+                        attachLog: true
+                }
+            }
+        }
+
+        stage('Deploy to Staging') {
+            steps {
+                echo 'Stage 5: Use Jenkins Plugins or custom scripts to deploy to a staging server'
+                sh 'deploy_to_staging.sh'
+            }
+        }
+
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Stage 6: Use Jenkins Plugins to run integration tests on the staging environment'
+                sh 'run_integration_tests_staging.sh'
+            }
+        }
+
+        stage('Deploy to Production') {
+            steps {
+                echo 'Stage 7: Use Jenkins Plugins or custom scripts to deploy to a production server'
+                sh 'deploy_to_production.sh'
+            }
+        }
+    }
+
+    post {
+        failure {
+            emailext subject: "Pipeline Failed: ${currentBuild.fullDisplayName}",
+                body: "The Jenkins pipeline for your project has failed. Please check the logs for details.",
+                to: 'srohith9114@gmail.com',
+                attachLog: true
+        }
+
+        success {
+            emailext subject: "Pipeline Succeeded: ${currentBuild.fullDisplayName}",
+                body: "The Jenkins pipeline for your project has successfully completed.",
+                to: 'srohith9114@gmail.com',
+                attachLog: true
+        }
+    }
+}
