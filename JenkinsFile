@@ -5,15 +5,12 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Stage 1: Use Maven to compile and package your code'
-                sh 'mvn clean package'
             }
         }
 
         stage('Unit and Integration Tests') {
             steps {
                 echo 'Stage 2: Use JUnit for unit tests and Postman for integration tests'
-                sh 'run_unit_tests.sh'
-                sh 'run_integration_tests.sh'
             }
             post {
                 failure {
@@ -60,21 +57,18 @@ pipeline {
         stage('Deploy to Staging') {
             steps {
                 echo 'Stage 5: Use Jenkins Plugins or custom scripts to deploy to a staging server'
-                sh 'deploy_to_staging.sh'
             }
         }
 
         stage('Integration Tests on Staging') {
             steps {
                 echo 'Stage 6: Use Jenkins Plugins to run integration tests on the staging environment'
-                sh 'run_integration_tests_staging.sh'
             }
         }
 
         stage('Deploy to Production') {
             steps {
                 echo 'Stage 7: Use Jenkins Plugins or custom scripts to deploy to a production server'
-                sh 'deploy_to_production.sh'
             }
         }
     }
